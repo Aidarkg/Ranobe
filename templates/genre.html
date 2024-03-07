@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/genre.css' %}">
+<div class="genre-list">
+  <h2>Жанры</h2>
+  <ul>
+    {% for genre in genres %}
+      <li>
+        <a href="#">{{ genre.name.capitalize }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% endblock %}

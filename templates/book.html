@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<article class="book-detail">
+    <nav>
+        <a href="/book/{{ book_id }}/{{ previous_chapter }}"><button aria-label="Предыдущая глава">&lt;</button></a>
+        <a href="/book/{{ book_id }}"><button>{{ book_title }}</button></a>
+        <a href="/book/{{ book_id }}/{{ next_chapter }}"><button aria-label="Следующая глава">&gt;</button></a>
+    </nav>
+    {{ chapter_content|safe }}
+    <nav>
+        <a href="/book/{{ book_id }}/{{ previous_chapter }}"><button aria-label="Предыдущая глава">&lt;</button></a>
+        <a href="/book/{{ book_id }}/{{ next_chapter }}"><button aria-label="Следующая глава">&gt;</button></a>
+    </nav>
+    <footer>
+
+    </footer>
+</article>
+
+<style>
+    .book-detail {
+        margin: 20px auto;
+        padding: 0 150px;
+    }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    nav button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 18px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    nav button:hover {
+        background-color: #0056b3;
+    }
+
+    .book-detail p {
+        margin-bottom: 10px;
+        font-size: 20px;
+        font-family: Times, Times New Roman, serif;
+        line-height: 1.8;
+        text-align: justify;
+    }
+
+</style>
+{% endblock %}
