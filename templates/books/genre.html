@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{% static 'css/genre.css' %}">
 <div class="genre-list">
   <h2>Жанры</h2>
-  <ul>
+  <ul class="genre-columns">
     {% for genre in genres %}
       <li>
         <a href="#">{{ genre.name.capitalize }}</a>

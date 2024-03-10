@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/book_chapter.css' %}">
+<article class="book-detail">
+    <nav>
+        <a href="/book/{{ book_id }}/{{ previous_chapter }}"><button aria-label="Предыдущая глава">&lt;</button></a>
+        <a href="/book/{{ book_id }}"><button>{{ book.title }}</button></a>
+        <a href="/book/{{ book_id }}/{{ next_chapter }}"><button aria-label="Следующая глава">&gt;</button></a>
+    </nav>
+    {{ chapter_content|safe }}
+    <nav>
+        <a href="/book/{{ book_id }}/{{ previous_chapter }}"><button aria-label="Предыдущая глава">&lt;</button></a>
+        <a href="/book/{{ book_id }}"><button>{{ book.title }}</button></a>
+        <a href="/book/{{ book_id }}/{{ next_chapter }}"><button aria-label="Следующая глава">&gt;</button></a>
+    </nav>
+</article>
+
+{% endblock %}

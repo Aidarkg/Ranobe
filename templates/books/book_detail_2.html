@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/book_detail.css' %}">
+    
+<main>
+    <article>
+        <header>
+            <h1>{{ book_2.title }}</h1>
+            <p class="author">Автор: {{ book_2.author }}</p>
+            <p class="release-year">Год релиза: {{ book_2.years_of_release }}</p>
+        </header>
+        <section class="book-details">
+            <img src="{{ book_2.photo.url }}" alt="{{ book_2.title }}">
+            <p class="description">{{ book_2.description }}</p>
+            <!-- Пустой абзац для создания отступа -->
+            <p></p>
+            <!-- Кнопка для начала чтения -->
+            <a href="1/"><button class="start-reading-button">Начать читать</button></a>
+            <a href="{% url 'book_update' book_2.id %}"><button class="update">Обновить</button></a>
+            <a href="{% url 'book_delete' book_2.id %}"><button class="delete">Удалить</button></a>
+        </section>
+    </article>
+</main>
+{% endblock %}

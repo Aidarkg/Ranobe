@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+{% for book in books_2 %}
+
+
+        <a href="{% url 'book_detail_2' book.id %}" class="book-link">
+          <div class="book-card">
+            <img src="{{ book.photo.url }}" alt="Книга 1">
+            <div>{{ book.title|truncatechars:45 }}</div>
+          </div>
+        {% endfor %}
+        </a>
+
+
+{% endblock %}

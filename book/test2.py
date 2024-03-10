@@ -1,39 +1,22 @@
-from ebooklib import epub
-import ebooklib
 import os
+import ebooklib
+from ebooklib import epub
 
-def save_all_chapters(epub_file_path, output_folder):
+def extract_epub_content(epub_file_path):
     book = epub.read_epub(epub_file_path)
-    
-    # Создаем папку для сохранения файлов, если она не существует
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-    
-    # Поиск и сохранение содержимого всех глав
+    content = ''
+    a = 0
     for item in book.get_items():
-        if item.get_type() == ebooklib.ITEM_DOCUMENT and item.get_name().startswith("Chapter"):
-            chapter_name = item.get_name()
-            print("Saving content of {}...".format(chapter_name))
-            content = item.get_content()
-            output_file_path = os.path.join(output_folder, chapter_name)
-            
-            # Декодируем содержимое в UTF-8 и сохраняем в файл
-            with open(output_file_path, 'w', encoding='utf-8') as file:
-                file.write(content.decode('utf-8'))
-            print("Content of {} saved to: {}".format(chapter_name, output_file_path))
+        a += 1
+        if item.get_type() == ebooklib.ITEM_DOCUMENT:
+            content = item.get_body_content().decode('utf-8')  # Преобразование содержимого в строку
+        title = item.get_name()
+        print(title)
+        if a == 50:
+            break
+    return title
 
-# Укажите путь к файлу EPUB
-epub_file_path = "ranobe/chernoknijnik_v_mire_magov.epub"
-
-# Укажите папку для сохранения содержимого глав
-output_folder = "D:/PycharmProjects/WEB дизайн/Чернокнижник/chapter1_content.html"
-
-# Вызываем функцию сохранения содержимого всех глав в файлы
-save_all_chapters(epub_file_path, output_folder)
-
-
-
-
-# Укажите путь для сохранения содержимого главы в файл
-# output_file_path = "D:/PycharmProjects/WEB дизайн/Чернокнижник/chapter1_content.html"
-
+epub_file_path = 'ranobe/dobro_pojalovat_v_klass_prevoshodstva.epub'
+content = extract_epub_content(epub_file_path)
+# print(content)
+# ranobe/dobro_pojalovat_v_klass_prevoshodstva.epub

@@ -1,109 +1,119 @@
-from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import Http404
-from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.views.generic import ListView, CreateView, DetailView, View, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.db import IntegrityError
 from book import models
 from book import forms
 from ebooklib import epub
+import re
 import ebooklib
 
 
-class BookListView(ListView):
-    model = models.Book
-    context_object_name = 'books'
-    template_name = 'index.html'
+class BookListView(LoginRequiredMixin, ListView):
+    model = models.Book2
+    context_object_name = 'books_2'
+    template_name = 'books/book_list.html'
+    login_url = '/login/'
     
 
+class BookDetailView(LoginRequiredMixin, DetailView):
+    model = models.Book2
+    context_object_name = 'book_2'
+    template_name = 'books/book_detail_2.html'
+    pk_url_kwarg = 'id'
 
-def book_list_view(request):
-    if request.method == 'GET':
-        books = models.Book.objects.all()
-        context = {'books': books}
-        return render(
-            request,
-            'index.html',
-            context
-        )
-    
-def book_detail_view(request, id):
-    if request.method == 'GET':
-        book = models.Book.objects.get(id=id)
-        context = {
-            'book': book
-        }
-        return render(
-            request,
-            'book_detail.html',
-            context
-        )
-    
-def book_create_view(request):
-    if request.method == "POST":
-        form = forms.BookCreateForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('book_list')
-        else:
-            print(form.errors)
-    else:
-        form = forms.BookCreateForm()
-    return render(
-        request,
-        'create_book.html',
-        {'form': form}
-    )
 
-def genre_list_view(request):
-    if request.method == 'GET':
-        genre = models.Genre.objects.all().order_by('name')
-        context = {'genres': genre}
-        return render(
-            request,
-            'genre.html',
-            context
-        )
-    
-def books_chapter_view(request, book_id, chapter_id):
-    try:
-        book = get_object_or_404(models.Book, id=book_id)
-        book_chapter = get_object_or_404(models.BookFile, book_id=book)
-        book_file_path = "media/" + str(book_chapter.file)
+class BookCreateView(LoginRequiredMixin, CreateView):
+    model = models.Book2
+    form_class = forms.BookCreateForm
+    template_name = 'books/create_book.html'
+    success_url = '/'
 
-        book = epub.read_epub(book_file_path)
+    def form_valid(self, form):
+        try:
+            return super().form_valid(form)
+        except IntegrityError:
+            form.add_error('file', 'Книга с таким заголовком уже существует.')
+            return self.form_invalid(form)
 
-        chapter_content = None
-        for item in book.get_items():
-            if item.get_type() == ebooklib.ITEM_DOCUMENT and item.get_name() == f"Chapter{chapter_id}.html" :
-                chapter_content = item.get_content().decode('utf-8')
-                break
-        
-        if chapter_content is None:
-            raise Http404('Chapter not found')
 
-        chapter_content = chapter_content.replace('</h1>', '</h1><p>')
-        chapter_content = chapter_content.replace('</body>', '</p></body>')
+class GenreListView(LoginRequiredMixin, ListView):
+    model = models.Genre
+    context_object_name = 'genres'
+    template_name = 'books/genre.html'
 
-        next_chapter = chapter_id + 1
-        if chapter_id != 1:
-            previous_chapter = chapter_id - 1
-        elif chapter_id == 1:
-            previous_chapter = 1
-        book_b = models.Book.objects.get(id=book_id)
-        book_title = book_b.title
-        context = {
-            'chapter_content': chapter_content, 
-            "next_chapter": next_chapter,
-            "previous_chapter": previous_chapter,
-            'book_id': book_id,
-            'book_title': book_title
-        }
 
-        return render(
-            request, 
-            'book.html', 
-            context
-        )
+class BooksChapterView(LoginRequiredMixin, View):
+    def get(self, request, book_id, chapter_id):
+        try:
+            book = get_object_or_404(models.Book2, id=book_id)
+            book_file_path = book.file.path
 
-    except models.Book.DoesNotExist:
-        raise Http404('Book not found')
-    except models.BookFile.DoesNotExist:
-        raise Http404('Book file not found')
+            book = epub.read_epub(book_file_path)
+
+            chapter_content = None
+            for item in book.get_items():
+                chapter_number = re.sub(r'\D', '', item.get_name())
+                if chapter_number.isdigit():
+                    chapter_number = int(chapter_number)
+                    if chapter_number == int(chapter_id):
+                        if item.get_type() == ebooklib.ITEM_DOCUMENT:
+                            chapter_content = item.get_content().decode('utf-8')
+                            break
+            
+            number = 0
+            for item in book.get_items():
+                number += 1
+            last_chapter_number = number -5
+
+
+            if chapter_content is None:
+                raise Http404('Chapter not found')
+            chapter_content = chapter_content.replace('</h1>', '</h1><p>')
+            chapter_content = chapter_content.replace('</body>', '</p></body>')
+
+            next_chapter = int(chapter_id) + 1 if chapter_id < last_chapter_number else 1
+            previous_chapter = int(chapter_id) - 1 if int(chapter_id) > 1 else last_chapter_number
+
+            context = {
+                'chapter_content': chapter_content, 
+                "next_chapter": next_chapter,
+                "previous_chapter": previous_chapter,
+                'book_id': book_id,
+                'book': book,
+                'last_chapter': last_chapter_number
+            }
+
+            return render(
+                request, 
+                'books/book.html', 
+                context
+            )
+
+        except models.Book.DoesNotExist:
+            raise Http404('Book not found')
+        except models.BookFile.DoesNotExist:
+            raise Http404('Book file not found')
+
+
+class BookUpdateView(LoginRequiredMixin, UpdateView):
+    model = models.Book2
+    form_class = forms.BookCreateForm
+    template_name = 'books/book_update.html'
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('book_detail_2')
+
+
+class BookDeleteView(LoginRequiredMixin, DeleteView):
+    model = models.Book2
+    template_name = 'books/book_delete.html'
+    pk_url_kwarg = 'id'
+    success_url = '/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['book_2'] = self.model.objects.get(pk=self.kwargs['id'])
+        return context
+
