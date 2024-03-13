@@ -1,10 +1,11 @@
 {% extends 'index.html' %}
+{% load static %}
 
 {% block content %}
 
-{% for book in books_2 %}
+<link rel="stylesheet" href="{% static 'css/book_list.css' %}">
 
-
+        {% for book in books_2 %}
         <a href="{% url 'book_detail_2' book.id %}" class="book-link">
           <div class="book-card">
             <img src="{{ book.photo.url }}" alt="Книга 1">
@@ -13,5 +14,10 @@
         {% endfor %}
         </a>
 
-
+        
+        <div class="pagination">
+          {% for page in max_page.paginator.page_range %}
+              <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+          {% endfor %}
+      </div>
 {% endblock %}

@@ -3,6 +3,7 @@ from django.http import Http404
 from django.views.generic import ListView, CreateView, DetailView, View, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from book import models
 from book import forms
@@ -16,6 +17,16 @@ class BookListView(LoginRequiredMixin, ListView):
     context_object_name = 'books_2'
     template_name = 'books/book_list.html'
     login_url = '/login/'
+    paginate_by = 5
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        queryset = self.get_queryset()
+        paginator =  Paginator(queryset, self.paginate_by)
+        page = self.request.GET.get('page', 1)
+        page_ogj = paginator.get_page(page)
+        context['max_page'] = page_ogj
+        return context
     
 
 class BookDetailView(LoginRequiredMixin, DetailView):
@@ -23,6 +34,7 @@ class BookDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'book_2'
     template_name = 'books/book_detail_2.html'
     pk_url_kwarg = 'id'
+    login_url = '/login/'
 
 
 class BookCreateView(LoginRequiredMixin, CreateView):
@@ -30,6 +42,7 @@ class BookCreateView(LoginRequiredMixin, CreateView):
     form_class = forms.BookCreateForm
     template_name = 'books/create_book.html'
     success_url = '/'
+    login_url = '/login/'
 
     def form_valid(self, form):
         try:
@@ -43,9 +56,11 @@ class GenreListView(LoginRequiredMixin, ListView):
     model = models.Genre
     context_object_name = 'genres'
     template_name = 'books/genre.html'
+    login_url = '/login/'
 
 
 class BooksChapterView(LoginRequiredMixin, View):
+    login_url = '/login/'
     def get(self, request, book_id, chapter_id):
         try:
             book = get_object_or_404(models.Book2, id=book_id)
@@ -104,6 +119,7 @@ class BookUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'books/book_update.html'
     pk_url_kwarg = 'id'
     success_url = reverse_lazy('book_detail_2')
+    login_url = '/login/'
 
 
 class BookDeleteView(LoginRequiredMixin, DeleteView):
@@ -111,6 +127,7 @@ class BookDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'books/book_delete.html'
     pk_url_kwarg = 'id'
     success_url = '/'
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

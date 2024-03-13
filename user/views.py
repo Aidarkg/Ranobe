@@ -107,6 +107,7 @@ class LogoutView(View):
     
 
 class ProfileView(LoginRequiredMixin, View):
+    login_url = '/login/'
     def get(self, request):
         return render(request, 'user/profile.html', {'form': forms.ProfileForm()})
     def post(self, request):
@@ -119,6 +120,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     form_class = forms.ProfileForm
     template_name = 'user/profile_update.html'
     success_url = reverse_lazy('profile')
+    login_url = '/login/'
 
     def get_object(self, queryset=None):
         return self.request.user.profile
