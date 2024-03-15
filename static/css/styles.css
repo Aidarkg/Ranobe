@@ -1,0 +1,106 @@
+body {
+    margin: 0;
+    font-family: Times, Times New Roman, serif;
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    height: 56px;
+    background-color: #9DBC98;
+    display: flex;
+    justify-content: space-between; /* Равномерное распределение элементов по горизонтали */
+    align-items: center; /* Выравнивание элементов по вертикали */
+    padding: 0 20px; /* Внутренние отступы слева и справа */
+    flex-shrink: 0;
+}
+
+.title {
+    font-size: 24px; /* Размер шрифта */
+    color: #fff; /* Цвет текста */
+}
+
+.title a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.title a:hover {
+    text-decoration: underline;
+}
+
+.menu {
+    list-style-type: none; /* Убираем стандартные маркеры списка */
+    padding: 0; /* Убираем внутренние отступы списка */
+    margin: 0; /* Убираем внешние отступы списка */
+}
+
+.menu li {
+    display: inline-block; /* Элементы списка идут в одной строке */
+    margin-right: 20px; /* Отступ между элементами списка */
+}
+
+.menu li a {
+    text-decoration: none; /* Убираем подчеркивание ссылок */
+    color: #fff; /* Цвет текста ссылок */
+    font-size: 18px; /* Размер шрифта ссылок */
+}
+
+.menu li a:hover {
+    text-decoration: underline; /* Подчеркивание ссылки при наведении */
+}
+
+
+main {
+    display: flex;
+    background-color: white;
+    flex: 1;
+    flex-grow: 1;
+    flex-direction: row; /* Изменение направления расположения на горизонтальное */
+    flex-wrap: wrap; /* Разрешение переноса на новую строку, если карточек слишком много */
+    align-items: flex-start; /* Выравнивание карточек по верхнему краю */
+    padding: 0 100px;
+}
+
+.book-link {
+    text-decoration: none; /* Убираем стандартное подчеркивание ссылок */
+    color: inherit; /* Наследуем цвет текста из родительского элемента */
+}
+
+.book-card {
+    width: 180px; /* Ширина карточки */
+    height: 300px;
+    margin: 10px; /* Отступы между карточками */
+    border: 1px solid #ccc; /* Граница карточки */
+    padding: 10px; /* Внутренний отступ внутри карточки */
+    text-align: center; /* Выравнивание текста по центру */
+    transition: transform 0.1s ease; /* Плавное изменение масштаба при наведении */
+    border: 1px solid #ddd; /* Add a border to the book card */
+    border-radius: 5px; /* Add border radius for rounded corners */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+}
+
+
+.book-card:hover {
+    transform: scale(1.05); /* Увеличиваем размер карточки при наведении мыши */
+}
+  
+.book-card img {
+    width: 180px; /* Make the image fill the entire width of the book card */
+    height: 250px; /* Maintain aspect ratio of the image */
+    border-radius: 5px; /* Add border radius for rounded corners */
+    margin-bottom: 10px; /* Add space between image and other content */
+}
+
+  
+footer  {
+    height: 50px;
+    /* background-color: #9DBC98; */
+    flex-shrink: 0;
+    /* text-align: center; */
+    /* padding: 10px; */
+}

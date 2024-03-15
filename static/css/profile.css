@@ -1,0 +1,22 @@
+/* styles.css */
+
+/* Общие стили */
+.container {
+    margin-top: 50px;
+}
+
+/* Стили для изображения профиля */
+.profile-img {
+    width: 300px;
+    border-radius: 50%;
+}
+
+/* Стили для кнопки выхода */
+.logout-btn {
+    background-color: #f44336; /* Красный цвет */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

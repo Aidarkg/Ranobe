@@ -1,5 +1,4 @@
 venv
-static
 staticfiles
 __pycache__/
 .idea
